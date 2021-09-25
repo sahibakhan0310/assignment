@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import {Formik,Form} from "formik";
-import * as Yup from 'yup';
 import FormLayout from './FormLayout';
 import axios from 'axios'
+import { setLoading } from '../actions/Loading.action';
+import {connect} from 'react-redux'
+import Loader from './Loader';
+
 class LoginForm extends Component {
   constructor(props) {
     super(props)
@@ -24,27 +27,36 @@ class LoginForm extends Component {
     }
     const onSubmit= values =>{
         //console.log("values",values)
+        //this.setState({loading:true})
+     
         (async () => {
       
           try {
+            //this.props.setLoading(true)
             const response = await axios({
               url: `https://reqres.in/api/login`, 
               method: 'POST',
               data: {email:values.email,password:values.password}
             });
+            this.props.setLoading(true)
             
             const { token } = response.data;
             console.log(token)
+            this.props.setLoading(false)
             this.props.history.push('/welcome')
           } catch (error) {
+            //this.props.setLoading(true)
+            this.props.setLoading(false)
             console.error(error); 
             this.props.history.push('/error')
           }
           
         })();
     }
+    const {loading}=this.props;
         return (
             <>
+ {loading && <Loader /> }
              <Formik initialValues={initialValues}        
         validate={values => {
                       const errors = {};
@@ -82,5 +94,14 @@ class LoginForm extends Component {
         )
     }
 }
-
-export default LoginForm
+const mapStateToProps= (state) => {
+  return {
+    loading:state.showLoading
+  }
+}
+const mapDispatchToProps = dispatch =>{
+return {
+  setLoading: (data) => dispatch(setLoading(data))
+}
+}
+export default connect(mapStateToProps,mapDispatchToProps)(LoginForm)
