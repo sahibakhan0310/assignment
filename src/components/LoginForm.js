@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import {Formik,Form} from "formik";
 import FormLayout from './FormLayout';
 import axios from 'axios'
-import { setLoading } from '../actions/Loading.action';
+import { setLoading,loginUserUnsuccessful,loginUser } from '../actions/Loading.action';
 import {connect} from 'react-redux'
 import Loader from './Loader';
+import Welcome from './Welcome';
+import ErrorPage from './ErrorPage';
 
 class LoginForm extends Component {
   constructor(props) {
@@ -28,35 +30,35 @@ class LoginForm extends Component {
     const onSubmit= values =>{
         //console.log("values",values)
         //this.setState({loading:true})
-     
+        //this.props.setLoading(true)
         (async () => {
       
           try {
-            //this.props.setLoading(true)
+            this.props.setLoading(true)
             const response = await axios({
               url: `https://reqres.in/api/login`, 
               method: 'POST',
               data: {email:values.email,password:values.password}
             });
-            this.props.setLoading(true)
-            
-            const { token } = response.data;
-            console.log(token)
-            this.props.setLoading(false)
-            this.props.history.push('/welcome')
+            //this.props.setLoading(true)
+            this.props.loginUser(response.data)
+            //this.props.history.push('/welcome')
           } catch (error) {
             //this.props.setLoading(true)
-            this.props.setLoading(false)
+            
             console.error(error); 
+            this.props.loginUserUnsuccessful(error)
             this.props.history.push('/error')
           }
           
         })();
     }
-    const {loading}=this.props;
+    const {loading,isLoggedIn,isError}=this.props;
         return (
             <>
  {loading && <Loader /> }
+ {isLoggedIn && <Welcome />}
+ {isError && <ErrorPage />}
              <Formik initialValues={initialValues}        
         validate={values => {
                       const errors = {};
@@ -96,12 +98,16 @@ class LoginForm extends Component {
 }
 const mapStateToProps= (state) => {
   return {
-    loading:state.showLoading
+    showLoading:state.showLoading,
+    isLoggedIn:state.isLoggedIn,
+    isError:state.isError
   }
 }
 const mapDispatchToProps = dispatch =>{
 return {
-  setLoading: (data) => dispatch(setLoading(data))
+  setLoading: (data) => dispatch(setLoading(data)),
+  loginUser: (data) => dispatch(loginUser(data)),
+  loginUserUnsuccessful : (data) => dispatch(loginUserUnsuccessful (data))
 }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(LoginForm)
