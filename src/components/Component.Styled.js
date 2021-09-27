@@ -15,8 +15,9 @@ export const LoginFormHeading=styled.h1 `
 color:black;
 `
 export const LoginFormLayout=styled.div `
-display:flex;
-padding-left:20px;
+display:grid;
+padding:20px;
+width:40%;
 `
 export const LoginFormField = styled.input`
   padding: 0.5em;
@@ -26,17 +27,18 @@ export const LoginFormField = styled.input`
   
 `;
 
-export const LoginFormLabel=styled.h2 `
+export const LoginFormLabel=styled.span `
 color:black;
+text-align:left;
 `
 export const LoginButton = styled.button`
   padding: 10px;
-  margin: 25px;
   float: left;
+  margin-left:20px;
 `;
 
-export const TextContent=styled.span `
-color:black;
+export const ErrorContent=styled.div `
+color:red;
 float:left;
-margin:25px;
+font-size:20px;
 `

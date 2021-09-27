@@ -7,6 +7,7 @@ import {connect} from 'react-redux'
 import Loader from './Loader';
 import Welcome from './Welcome';
 import ErrorPage from './ErrorPage';
+import {LoginButton} from "./Component.Styled"
 
 class LoginForm extends Component {
   constructor(props) {
@@ -42,7 +43,7 @@ class LoginForm extends Component {
             });
             //this.props.setLoading(true)
             this.props.loginUser(response.data)
-            //this.props.history.push('/welcome')
+            this.props.history.push('/welcome')
           } catch (error) {
             //this.props.setLoading(true)
             
@@ -57,17 +58,21 @@ class LoginForm extends Component {
         return (
             <>
  {loading && <Loader /> }
- {isLoggedIn && <Welcome />}
+
  {isError && <ErrorPage />}
              <Formik initialValues={initialValues}        
         validate={values => {
                       const errors = {};
-                      if (!values.email || !values.password) {
-                        errors.required = 'Required';
+                      if (!values.email) {
+                        errors.email = 'Required';
                       } else if (
                         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
                        ) {
                          errors.email = 'Invalid email address';
+                      }
+                      if(!values.password)
+                      {
+                        errors.password='Required'
                       }
                       return errors;
                     }} 
@@ -79,19 +84,21 @@ class LoginForm extends Component {
                     type="email"
                     label="Username"
                     name="email"
+                    error={formik.errors.email ? formik.errors.email : null }
                     />
                        <FormLayout
                     control="input"
                     type="password"
                     label="Password"
                     name="password"
+                    error={formik.errors.password ? formik.errors.password : null }
                     />
                 
-                    <button type='submit'>Submit</button>
+                <LoginButton type='submit'>Submit</LoginButton>
                 </Form>
             }}
             </Formik>
-          <button onClick={this.handleRegister}>Register Here</button>
+          <LoginButton onClick={this.handleRegister}>Register Here</LoginButton>
             </>
         )
     }

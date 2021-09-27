@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {Formik,Form} from "formik";
 import FormLayout from './FormLayout';
 import axios from "axios"
+import {LoginButton,ErrorContent} from "./Component.Styled"
 class RegisterForm extends Component {
     
     render() {
@@ -12,6 +13,7 @@ class RegisterForm extends Component {
             password:'',
             confirmPassword:''
         }
+       
         const onSubmit= values =>{
             (async () => {
       
@@ -24,7 +26,7 @@ class RegisterForm extends Component {
                   
                   const { token } = response.data;
                   console.log(token)
-                  this.props.history.push('/login')
+                  this.props.history.push('/')
                 } catch (error) {
                   console.error(error); 
                   this.props.history.push('/error');
@@ -37,52 +39,79 @@ class RegisterForm extends Component {
         <Formik initialValues={initialValues}        
         validate={values => {
                       const errors = {};
-                      if (!values.email || !values.firstName || !values.lastName || !values.password || !values.confirmPassword) {
-                        errors.required = 'Required';
-                      } else if (
+                      if (!values.email) {
+                        errors.email = 'Required';
+                      }
+                      else if (
                         !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
                        ) {
                          errors.email = 'Invalid email address';
                       }
+                       if(!values.firstName){
+                        errors.firstName = 'Required';
+                      }
+                      else if(!/^[a-zA-Z]*$/g.test(values.firstName))
+                      {
+                        errors.firstName='no numbers or special characters allowed'
+                      }
+                       if(!values.lastName){
+                        errors.lastName = 'Required';
+                      }
+                      else if(!/^[a-zA-Z]*$/g.test(values.lastName))
+                      {
+                        errors.lastName='no numbers or special characters allowed'
+                      }
+                       if(!values.password){
+                        errors.password = 'Required';
+                      }
+                       if(!values.confirmPassword){
+                        errors.confirmPassword = 'Required';
+                      }
                       else if(values.confirmPassword !== values.password)
                       {
-                          errors.password='password not matching'
+                          errors.confirmPassword='password not matching'
                       }
                       return errors;
                     }} onSubmit={onSubmit}>
             {formik => {
+               console.log(formik.errors)
                 return <Form>
                        <FormLayout
                     control="input"
                     type="firstName"
                     label="First Name"
                     name="firstName"
+                    error={formik.errors.firstName ? formik.errors.firstName : null}
                     />
                        <FormLayout
                     control="input"
                     type="lastName"
                     label="Last Name"
                     name="lastName"
+                    error={formik.errors.lastName ? formik.errors.lastName : null}
                     />
                     <FormLayout
                     control="input"
                     type="email"
                     label="Email"
                     name="email"
+                    error={formik.errors.email ? formik.errors.email : null}
                     />
                        <FormLayout
                     control="input"
                     type="password"
                     label="Password"
                     name="password"
+                    error={formik.errors.password ? formik.errors.password : null}
                     />
                        <FormLayout
                     control="input"
                     type="password"
                     label="Confirm Password"
                     name="confirmPassword"
+                    error={formik.errors.confirmPassword ? formik.errors.confirmPassword : null}
                     />
-                    <button type='submit' disabled={!formik.isValid}>Submit</button>
+                    <LoginButton type='submit' disabled={!formik.isValid}>Submit</LoginButton>
                 </Form>
             }}
             </Formik>

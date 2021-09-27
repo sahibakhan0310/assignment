@@ -4,7 +4,8 @@ class ErrorPage extends Component {
     render() {
         return (
             <div>
-                Something went wrong!
+                 <style>{'body { background-color: yellow; }'}</style>
+               <h1> Something went wrong!</h1>
             </div>
         )
     }

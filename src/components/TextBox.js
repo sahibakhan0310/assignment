@@ -1,19 +1,23 @@
 import React,{Component} from 'react';
 import { Field, ErrorMessage } from 'formik'
 import ErrorComponent from './ErrorComponent';
+import   {LoginFormLayout,LoginFormLabel,ErrorContent}  from "./Component.Styled"
 
 
 class TextBox extends Component {
     render() {
-        const {label,name,...rest}=this.props;
+        const {label,name,error,...rest}=this.props;
         return (
-            <div>
-                <div className='form-control'>
-      <label htmlFor={name}>{label}</label>
+           
+                
+                     <LoginFormLayout>
+      <LoginFormLabel htmlFor={name}>{label}</LoginFormLabel>
       <Field id={name} name={name} {...rest} />
-      <ErrorMessage component={ErrorComponent} name={name} />
-    </div>
-            </div>
+      {error? <ErrorContent>{error}</ErrorContent> : null }
+     
+      </LoginFormLayout>
+    
+            
         )
     }
 }
